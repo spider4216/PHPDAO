@@ -1,5 +1,9 @@
 <?php
 
+namespace Classes;
+
+use DAOFactories\MySQLDAOFactory;
+
 /**
  * @author farZa
  * Class DAOFactory
@@ -29,6 +33,6 @@ abstract class DAOFactory
 //				break;
 		}
 
-		throw new Exception('DAO объект не был найден');
+		throw new \Exception('DAO объект не был найден');
 	}
 }

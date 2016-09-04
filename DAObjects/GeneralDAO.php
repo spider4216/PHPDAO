@@ -1,5 +1,7 @@
 <?php
 
+namespace DAObjects;
+
 /**
  * @author farZa
  * Интерфейс, который должны поддерживать все GeneralDAO
@@ -12,4 +14,5 @@ interface GeneralDAO
 
 	public function delete():GeneralDAO;
 	public function select():GeneralDAO;
+	public function execute():bool;
 }

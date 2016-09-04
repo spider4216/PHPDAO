@@ -1,0 +1,24 @@
+<?php
+
+require_once __DIR__ . '/autoload.php';
+
+use Classes\DAOFactory;
+
+/** @var \DAOFactories\MySQLDAOFactory $mysqlGenerator */
+$mysqlGenerator = DAOFactory::initial(1);
+$mysqlGenerator->setHost('127.0.0.1');
+$mysqlGenerator->setUsername('username');
+$mysqlGenerator->setPassword('');
+$mysqlGenerator->setDbName('dbname');
+$mysqlGenerator->createConnection();
+
+/** @var \DAObjects\MysqlDAO $daoMysql */
+$daoMysql = $mysqlGenerator->generalDAO();
+$res = $daoMysql
+    ->table('news')
+    ->insert([
+        'title' => 'my title',
+        'description' => 'my description'
+    ])->execute();
+
+var_dump($res);

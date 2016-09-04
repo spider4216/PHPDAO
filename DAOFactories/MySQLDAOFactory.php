@@ -1,5 +1,11 @@
 <?php
 
+namespace DAOFactories;
+
+use Classes\DAOFactory;
+use DAObjects\MysqlDAO;
+use Classes\ConnectionsPool;
+
 /**
  * @author farZa
  */
@@ -50,21 +56,29 @@ class MySQLDAOFactory extends DAOFactory
 	public function createConnection()
 	{
 		if (!$this->host) {
-			throw new Exception('Не указан хост');
+			throw new \Exception('Не указан хост');
 		}
 
-		if (!$this->username || !$this->password) {
-			throw new Exception('Не указан логин или пароль');
+		if (!$this->username && !$this->password) {
+			throw new \Exception('Не указан логин или пароль');
 		}
 
 		if (!$this->dbName) {
-			throw new Exception('Не указано наименование базы данных');
+			throw new \Exception('Не указано наименование базы данных');
 		}
 
-		$this->pdo = new PDO('mysql:host=' . $this->host . ';dbname=' . $this->dbName, $this->username, $this->password);
+		$this->pdo = new \PDO('mysql:host=' . $this->host . ';dbname=' . $this->dbName, $this->username, $this->password);
+		$this->pdo->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
 
+		ConnectionsPool::pushConnection('MysqlDAO', $this->pdo);
 	}
 
+	/**
+	 * @author farZa
+	 * @return MysqlDAO
+	 * General DAO Object
+	 * Create other DAO objects if you need
+	 */
 	public function generalDAO()
 	{
 		return new MysqlDAO();

@@ -1,5 +1,7 @@
 <?php
 
+namespace Classes;
+
 /**
  * @author farZa
  * Object pool pattern
@@ -9,7 +11,7 @@ class ConnectionsPool
 {
     public static $pool;
 
-    public function pushConnection(string $name, object $connection)
+    public static function pushConnection(string $name, $connection)
     {
         self::$pool[$name] = $connection;
     }
