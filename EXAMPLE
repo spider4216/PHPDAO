@@ -14,11 +14,44 @@ $mysqlGenerator->createConnection();
 
 /** @var \DAObjects\MysqlDAO $daoMysql */
 $daoMysql = $mysqlGenerator->generalDAO();
+
 $res = $daoMysql
     ->table('news')
     ->insert([
         'title' => 'my title',
         'description' => 'my description'
     ])->execute();
+
+$res = $daoMysql
+	->table('news')
+	->update([
+		'title' => 'my title updated',
+		'description' => 'my description updated',
+	])
+	->where([
+		'id' => 3,
+	])
+	->execute();
+
+$res = $daoMysql
+	->delete()
+	->from('news')
+	->where([
+		'id' => 2,
+	])
+	->execute();
+
+$res = $daoMysql
+	->select('title')
+	->from('news')
+	->fetchAll();
+
+$res = $daoMysql
+	->select('title')
+	->from('news')
+	->where([
+		'id' => 3,
+	])
+	->fetchRow();
 
 var_dump($res);
