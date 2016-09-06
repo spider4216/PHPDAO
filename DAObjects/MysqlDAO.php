@@ -8,8 +8,7 @@ use DAObjects\GeneralDAO;
 /**
  * @author farZa
  * DAO объект для MYSQL
- * Избавиться от дублей чтобы придерживаться принципа DRY
- * todo Отрефакторить
+ * todo comments
  */
 class MysqlDAO implements GeneralDAO
 {
@@ -65,6 +64,63 @@ class MysqlDAO implements GeneralDAO
 		return $this;
 	}
 
+	private function generateValues(string $type):array
+	{
+		$columns = [];
+		$values = [];
+		$params = [];
+		$set = '';
+
+		switch ($type) {
+			case 'insert' :
+				foreach ($this->query['insert'] as $key => $value) {
+					$columns[] = $key;
+					$values[] = ':' . $key;
+					$params[':' . $key] = $value;
+				}
+
+				$columnString = implode(',', $columns);
+				$valueString = implode(',', $values);
+
+				return [
+					'columns' => $columnString,
+					'values' => $valueString,
+					'params' => $params,
+				];
+				break;
+
+			case 'update' :
+				foreach ($this->query['update'] as $key => $value) {
+					$set .= $key . ' = :' . $key . ',';
+					$params[':' . $key] = $value;
+				}
+
+				$set = rtrim($set, ',');
+
+				return [
+					'set' => $set,
+					'params' => $params,
+				];
+				break;
+
+			case 'where' :
+				foreach ($this->query['where'] as $key => $value) {
+					$values[] = $key . ' = :' . $key;
+					$params[':' . $key] = $value;
+				}
+
+				$valueString = implode(' ' . $this->query['sep'] . ' ', $values);
+
+				return [
+					'condition' => $valueString,
+					'params' => $params,
+				];
+				break;
+		}
+
+		return [];
+	}
+
 	public function execute():bool
 	{
 		/** @var \PDO $pdo */
@@ -72,22 +128,12 @@ class MysqlDAO implements GeneralDAO
 
 		if (isset($this->query['insert'])) {
 
-			$columns = [];
-			$values = [];
-			$params = [];
+			$insertResult = $this->generateValues('insert');
+			$columns = $insertResult['columns'];
+			$values = $insertResult['values'];
+			$params = $insertResult['params'];
 
-			foreach ($this->query['insert'] as $key => $value) {
-				$columns[] = $key;
-				$values[] = ':' . $key;
-				$params[':' . $key] = $value;
-			}
-
-			$columnString = implode(',', $columns);
-			$valueString = implode(',', $values);
-
-			$sql = 'INSERT INTO ' . $this->query['table'] . ' (' . $columnString . ') VALUES (' . $valueString . ')';
-
-			/** @var \PDO $pdo */
+			$sql = 'INSERT INTO ' . $this->query['table'] . ' (' . $columns . ') VALUES (' . $values . ')';
 
 			$stmt = $pdo->prepare($sql);
 
@@ -95,35 +141,25 @@ class MysqlDAO implements GeneralDAO
 		}
 
 		if (isset($this->query['update'])) {
-			$set = '';
-			$params = [];
+			$updateResult = $this->generateValues('update');
 
-			foreach ($this->query['update'] as $key => $value) {
-				$set .= $key . ' = :' . $key . ',';
-				$params[':' . $key] = $value;
-			}
+			$set = $updateResult['set'];
+			$params = $updateResult['params'];
 
-			$set = rtrim($set, ',');
+
 
 			$sql = 'UPDATE ' . $this->query['table'] . ' SET ' . $set;
 
 			if (isset($this->query['where'])) {
-				$valuesWhere = [];
-				$paramsWhere = [];
+				$whereResult = $this->generateValues('where');
 
-				foreach ($this->query['where'] as $key => $value) {
-					$valuesWhere[] = $key . ' = :' . $key;
-					$paramsWhere[':' . $key] = $value;
-				}
+				$condition = $whereResult['condition'];
+				$paramsWhere = $whereResult['params'];
 
-				$valueWhereString = implode(' ' . $this->query['sep'] . ' ', $valuesWhere);
 
-				$sql .= ' WHERE ' . $valueWhereString;
+				$sql .= ' WHERE ' . $condition;
 				$params = array_merge($params, $paramsWhere);
 			}
-
-//			var_dump($sql);
-//			var_dump($params);
 
 			$stmt = $pdo->prepare($sql);
 
@@ -137,16 +173,13 @@ class MysqlDAO implements GeneralDAO
 			$sql = 'DELETE FROM ' . $this->query['table'];
 
 			if (isset($this->query['where'])) {
-				$values = [];
+				$whereResult = $this->generateValues('where');
 
-				foreach ($this->query['where'] as $key => $value) {
-					$values[] = $key . ' = :' . $key;
-					$params[':' . $key] = $value;
-				}
+				$condition = $whereResult['condition'];
+				$params = $whereResult['params'];
 
-				$valueWhereString = implode(' ' . $this->query['sep'] . ' ', $values);
 
-				$sql .= ' WHERE ' . $valueWhereString;
+				$sql .= ' WHERE ' . $condition;
 			}
 
 			$stmt = $pdo->prepare($sql);
@@ -170,15 +203,13 @@ class MysqlDAO implements GeneralDAO
 
 
 		if (isset($this->query['where'])) {
-			$values = [];
-			foreach ($this->query['where'] as $key => $value) {
-				$values[] = $key . ' = :' . $key;
-				$params[':' . $key] = $value;
-			}
+			$whereResult = $this->generateValues('where');
 
-			$valueWhereString = implode(' ' . $this->query['sep'] . ' ', $values);
+			$condition = $whereResult['condition'];
+			$params = $whereResult['params'];
 
-			$sql .= ' WHERE ' . $valueWhereString;
+
+			$sql .= ' WHERE ' . $condition;
 		}
 
 		$stmt = $pdo->prepare($sql);
@@ -201,21 +232,19 @@ class MysqlDAO implements GeneralDAO
 
 
 		if (isset($this->query['where'])) {
-			$values = [];
-			foreach ($this->query['where'] as $key => $value) {
-				$values[] = $key . ' = :' . $key;
-				$params[':' . $key] = $value;
-			}
+			$whereResult = $this->generateValues('where');
 
-			$valueWhereString = implode(' ' . $this->query['sep'] . ' ', $values);
+			$condition = $whereResult['condition'];
+			$params = $whereResult['params'];
 
-			$sql .= ' WHERE ' . $valueWhereString;
+
+			$sql .= ' WHERE ' . $condition;
 		}
 
 		$stmt = $pdo->prepare($sql);
 		$stmt->execute($params);
 
-		return $stmt->fetch();
+		return $stmt->fetch(\PDO::FETCH_ASSOC);
 	}
 
 	public function resetDao()
