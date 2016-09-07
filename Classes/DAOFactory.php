@@ -7,21 +7,44 @@ use DAOFactories\MySQLDAOFactory;
 /**
  * @author farZa
  * Class DAOFactory
- * Абстрактный генератор DAO объектов
- * Класс построен по шаблону проектирования "Фабричный метод" (Factory Method)
+ * Abstract generator DAO objects
+ * Class was developed according to Factory Method Pattern
+ * DAOFactory can create DAO generators. Generators can have many different types
+ * Examples:
+ *  - DAO Mysql
+ *  - DAO PostgreSQL
+ * etc.
  */
 abstract class DAOFactory
 {
-	// Список типов DAO, поддерживаемых генератором
+	/**
+	 * @author farZa
+	 * List of DAO generators's types
+	 */
 	const MYSQL = 1;
 
+	/**
+	 * @author farZa
+	 * List of DAO generators's types
+	 */
 	const POSTGRESQL = 2;
 
-	// Здесь будет метод для каждого DAO, который может быть
-	// создан. Реализовывать эти методы
-	// должны конкретные генераторы.
+
+	/**
+	 * @author farZa
+	 * @return mixed
+	 * Here methods for each DAO, which can be created.
+	 * This methods have to be realized by particular generators.
+	 */
 	public abstract function generalDAO();
 
+	/**
+	 * @author farZa
+	 * @param int $DAOFactory - номер генератора (смотрите константы)
+	 * @return DAOFactory
+	 * @throws \Exception
+	 * Return generator by id
+	 */
 	public static function initial(int $DAOFactory):DAOFactory
 	{
 		switch ($DAOFactory) {
@@ -33,6 +56,6 @@ abstract class DAOFactory
 //				break;
 		}
 
-		throw new \Exception('DAO объект не был найден');
+		throw new \Exception('DAO object does not exist');
 	}
 }

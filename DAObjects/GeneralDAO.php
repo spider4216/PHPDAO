@@ -4,7 +4,9 @@ namespace DAObjects;
 
 /**
  * @author farZa
- * Интерфейс, который должны поддерживать все GeneralDAO
+ * This interface has to be implemented by every dao class with general type
+ * If you want to create other dao object with total different realization (relatively general type),
+ * create new interface with your methods
  */
 interface GeneralDAO
 {

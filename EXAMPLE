@@ -1,5 +1,7 @@
 <?php
 
+//see useful article about dao http://javatutor.net/articles/j2ee-pattern-data-access-object
+
 require_once __DIR__ . '/autoload.php';
 
 use Classes\DAOFactory;

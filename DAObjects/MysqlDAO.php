@@ -7,13 +7,24 @@ use DAObjects\GeneralDAO;
 
 /**
  * @author farZa
- * DAO объект для MYSQL
- * todo comments
+ * DAO object general type
+ * You can create your own DAO object with general interface (not necessary) if you need
  */
 class MysqlDAO implements GeneralDAO
 {
+	/**
+	 * @author farZa
+	 * @var array
+	 * Whole query wil be stored right here
+	 */
 	private $query = [];
 
+	/**
+	 * @author farZa
+	 * @param string $tableName
+	 * @return \DAObjects\GeneralDAO
+	 * Table name
+	 */
 	public function table(string $tableName):GeneralDAO
 	{
 		$this->query['table'] = $tableName;
@@ -21,6 +32,12 @@ class MysqlDAO implements GeneralDAO
 		return $this;
 	}
 
+	/**
+	 * @author farZa
+	 * @param array $data
+	 * @return \DAObjects\GeneralDAO
+	 * Method for insert into table
+	 */
 	public function insert(array $data):GeneralDAO
 	{
 		$this->query['insert'] = $data;
@@ -28,6 +45,12 @@ class MysqlDAO implements GeneralDAO
 		return $this;
 	}
 
+	/**
+	 * @author farZa
+	 * @param array $data
+	 * @return \DAObjects\GeneralDAO
+	 * Method for update table
+	 */
 	public function update(array $data):GeneralDAO
 	{
 		$this->query['update'] = $data;
@@ -35,6 +58,11 @@ class MysqlDAO implements GeneralDAO
 		return $this;
 	}
 
+	/**
+	 * @author farZa
+	 * @return \DAObjects\GeneralDAO
+	 * Method for delete from table
+	 */
 	public function delete():GeneralDAO
 	{
 		$this->query['delete'] = true;
@@ -42,6 +70,12 @@ class MysqlDAO implements GeneralDAO
 		return $this;
 	}
 
+	/**
+	 * @author farZa
+	 * @param string $columns
+	 * @return \DAObjects\GeneralDAO
+	 * Method for select from table
+	 */
 	public function select(string $columns):GeneralDAO
 	{
 		$this->query['select'] = $columns;
@@ -49,6 +83,13 @@ class MysqlDAO implements GeneralDAO
 		return $this;
 	}
 
+	/**
+	 * @author farZa
+	 * @param $data
+	 * @param string $sep
+	 * @return \DAObjects\GeneralDAO
+	 * Query condition
+	 */
 	public function where($data, $sep = 'AND'):GeneralDAO
 	{
 		$this->query['where'] = $data;
@@ -57,6 +98,12 @@ class MysqlDAO implements GeneralDAO
 		return $this;
 	}
 
+	/**
+	 * @author farZa
+	 * @param string $table
+	 * @return \DAObjects\GeneralDAO
+	 * Alias table()
+	 */
 	public function from(string $table):GeneralDAO
 	{
 		$this->query['table'] = $table;
@@ -64,6 +111,16 @@ class MysqlDAO implements GeneralDAO
 		return $this;
 	}
 
+	/**
+	 * @author farZa
+	 * @param string $type
+	 * @return array
+	 * Generate data for query by type
+	 * Types:
+	 *  - insert
+	 *  - update
+	 *  - where
+	 */
 	private function generateValues(string $type):array
 	{
 		$columns = [];
@@ -121,6 +178,11 @@ class MysqlDAO implements GeneralDAO
 		return [];
 	}
 
+	/**
+	 * @author farZa
+	 * @return bool
+	 * Execute query^ insert, update, delete
+	 */
 	public function execute():bool
 	{
 		/** @var \PDO $pdo */
@@ -189,6 +251,11 @@ class MysqlDAO implements GeneralDAO
 		return false;
 	}
 
+	/**
+	 * @author farZa
+	 * @return array
+	 * Get all data from table
+	 */
 	public function fetchAll():array
 	{
 		/** @var \PDO $pdo */
@@ -218,6 +285,11 @@ class MysqlDAO implements GeneralDAO
 		return $stmt->fetchAll();
 	}
 
+	/**
+	 * @author farZa
+	 * @return array
+	 * Get one record by condition
+	 */
 	public function fetchRow():array
 	{
 		/** @var \PDO $pdo */
@@ -247,6 +319,10 @@ class MysqlDAO implements GeneralDAO
 		return $stmt->fetch(\PDO::FETCH_ASSOC);
 	}
 
+	/**
+	 * @author farZa
+	 * Reset query
+	 */
 	public function resetDao()
 	{
 		$this->query = [];
