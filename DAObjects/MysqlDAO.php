@@ -282,7 +282,7 @@ class MysqlDAO implements GeneralDAO
 		$stmt = $pdo->prepare($sql);
 		$stmt->execute($params);
 
-		return $stmt->fetchAll();
+		return $stmt->fetchAll(\PDO::FETCH_ASSOC);
 	}
 
 	/**
