@@ -280,7 +280,12 @@ class MysqlDAO implements GeneralDAO
 
 		$sql = 'SELECT ' . $this->query['select'] . ' FROM ' . $this->query['table'];
 		$params = [];
+		
+		if (isset($this->query['orderBy'])){
 
+			$sql .= ' ORDER BY ' . $this->query['orderBy'];
+
+		}
 
 		if (isset($this->query['where'])) {
 			$whereResult = $this->generateValues('where');
