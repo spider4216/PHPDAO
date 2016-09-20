@@ -110,6 +110,19 @@ class MysqlDAO implements GeneralDAO
 
 		return $this;
 	}
+	
+	/**
+	 * @author Jackson1911
+	 * @param  string $fieldName
+	 * @return \packs\PHPDAO\DAObjects\GeneralDAO
+	 * Method for order data by field name
+	 */
+	public function orderBy(string $fieldName):GeneralDAO
+	{
+		$this->query['orderBy'] = $fieldName;
+
+		return $this;
+	}
 
 	/**
 	 * @author farZa
@@ -267,7 +280,12 @@ class MysqlDAO implements GeneralDAO
 
 		$sql = 'SELECT ' . $this->query['select'] . ' FROM ' . $this->query['table'];
 		$params = [];
+		
+		if (isset($this->query['orderBy'])){
 
+			$sql .= ' ORDER BY ' . $this->query['orderBy'];
+
+		}
 
 		if (isset($this->query['where'])) {
 			$whereResult = $this->generateValues('where');
