@@ -56,4 +56,12 @@ $res = $daoMysql
 	])
 	->fetchRow();
 
+$res = $daoMysql
+    ->select('n.*, a.*, p.*')
+    ->from('news n')
+    ->innerJoin('authors a', 'a.id = n.author_id')
+    ->innerJoin('profile p', 'p.id = a.id')
+    ->where(['a.username' => 'admin'])
+    ->fetchAll();
+
 var_dump($res);
