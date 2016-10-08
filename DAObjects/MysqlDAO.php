@@ -325,8 +325,10 @@ class MysqlDAO implements GeneralDAO
 
 		$stmt = $pdo->prepare($sql);
 		$stmt->execute($params);
+		$res = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+		$this->resetDao();
 
-		return $stmt->fetchAll(\PDO::FETCH_ASSOC);
+		return $res;
 	}
 
 	/**
@@ -359,8 +361,10 @@ class MysqlDAO implements GeneralDAO
 
 		$stmt = $pdo->prepare($sql);
 		$stmt->execute($params);
+		$res = $stmt->fetch(\PDO::FETCH_ASSOC);
+		$this->resetDao();
 
-		return $stmt->fetch(\PDO::FETCH_ASSOC);
+		return $res;
 	}
 
 	/**
