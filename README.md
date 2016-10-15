@@ -1,29 +1,30 @@
-<?php
+# PHPDAO
+Data Access Object for PHP 7+
 
-//see useful article about dao http://javatutor.net/articles/j2ee-pattern-data-access-object
-
-require_once __DIR__ . '/autoload.php';
-
-use Classes\DAOFactory;
-
-/** @var \DAOFactories\MySQLDAOFactory $mysqlGenerator */
+##Get started
+###Init
+```php
 $mysqlGenerator = DAOFactory::initial(1);
-$mysqlGenerator->setHost('127.0.0.1');
+$mysqlGenerator->setHost('host');
 $mysqlGenerator->setUsername('username');
-$mysqlGenerator->setPassword('');
+$mysqlGenerator->setPassword('password');
 $mysqlGenerator->setDbName('dbname');
 $mysqlGenerator->createConnection();
 
 /** @var \DAObjects\MysqlDAO $daoMysql */
 $daoMysql = $mysqlGenerator->generalDAO();
-
+```
+####Insert
+```php
 $res = $daoMysql
     ->table('news')
     ->insert([
         'title' => 'my title',
         'description' => 'my description'
     ])->execute();
-
+```
+####Update
+```php
 $res = $daoMysql
 	->table('news')
 	->update([
@@ -34,7 +35,9 @@ $res = $daoMysql
 		'id' => 3,
 	])
 	->execute();
-
+```
+####Delete
+```php
 $res = $daoMysql
 	->delete()
 	->from('news')
@@ -42,12 +45,17 @@ $res = $daoMysql
 		'id' => 2,
 	])
 	->execute();
-
+```
+####fetchAll
+```php
 $res = $daoMysql
 	->select('title')
 	->from('news')
 	->fetchAll();
+```
 
+####fetchRow
+```php
 $res = $daoMysql
 	->select('title')
 	->from('news')
@@ -55,7 +63,9 @@ $res = $daoMysql
 		'id' => 3,
 	])
 	->fetchRow();
-
+```
+####innerJoin
+```php
 $res = $daoMysql
     ->select('n.*, a.*, p.*')
     ->from('news n')
@@ -63,5 +73,4 @@ $res = $daoMysql
     ->innerJoin('profile p', 'p.id = a.id')
     ->where(['a.username' => 'admin'])
     ->fetchAll();
-
-var_dump($res);
+```
