@@ -139,6 +139,12 @@ class MysqlDAO implements GeneralDAO
 		return $this;
 	}
 	
+	/**
+	 * @author Jackson1911
+	 * @param string $joinTable
+	 * @param string $data
+	 * @return \DAObjects\GeneralDAO
+	 */
 	public function leftJoin(string $joinTable, string $data):GeneralDAO
 	{
 		$this->query['leftJoin'][] = [
@@ -147,7 +153,13 @@ class MysqlDAO implements GeneralDAO
 
 		return $this;
 	}
-
+	
+	/**
+	 * @author Jackson1911
+	 * @param string $joinTable
+	 * @param string $data
+	 * @return \DAObjects\GeneralDAO
+	 */
 	public function rightJoin(string $joinTable, string $data):GeneralDAO
 	{
 		$this->query['rightJoin'][] = [
